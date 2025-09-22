@@ -15,8 +15,9 @@ pub struct SSHClient {
 }
 
 impl SSHClient {
-    pub fn create(host: &str, port: u16, user: &str, password: &str) -> SSHClient {
-        SSHClient {
+    #[must_use] 
+    pub fn create(host: &str, port: u16, user: &str, password: &str) -> Self {
+        Self {
             host: host.to_owned(),
             port,
             user: user.to_owned(),
@@ -61,7 +62,7 @@ impl Drop for SSHClient {
     fn drop(&mut self) {
         if self.channel.is_some() {
             if let Result::Err(err) = self.disconnect() {
-                println!("SSH disconnect error: {}", err.to_string());
+                println!("SSH disconnect error: {err}");
             }
         }
     }

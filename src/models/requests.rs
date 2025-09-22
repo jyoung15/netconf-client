@@ -1,6 +1,7 @@
-use heck::KebabCase;
+use heck::ToKebabCase;
 use serde::{Serialize, Serializer};
 use std::string::ToString;
+use strum_macros::Display;
 
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "hello")]
@@ -10,13 +11,13 @@ pub struct HelloClient {
     pub capabilities: CapabilitiesClient,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct CapabilitiesClient {
     #[serde(rename = "capability")]
     pub capabilities: Vec<Capability>,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct Capability {
     #[serde(rename = "$value")]
     pub capability: String,
@@ -61,46 +62,46 @@ pub struct EditConfig {
     pub config: Data,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct DefaultOperation {
     #[serde(rename = "$value", serialize_with = "serialize_as_string_kebab_case")]
     pub value: DefaultOperationType,
 }
 
-#[derive(strum_macros::ToString, Debug, Serialize, PartialEq)]
+#[derive(Display, Debug, Serialize, PartialEq, Eq)]
 pub enum DefaultOperationType {
     Merge,
     Replace,
     None,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct TestOption {
     #[serde(rename = "$value", serialize_with = "serialize_as_string_kebab_case")]
     pub value: TestOptionType,
 }
 
-#[derive(strum_macros::ToString, Debug, Serialize, PartialEq)]
+#[derive(Display, Debug, Serialize, PartialEq, Eq)]
 pub enum TestOptionType {
     TestThenSet,
     Set,
     TestOnly,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct ErrorOption {
     #[serde(rename = "$value", serialize_with = "serialize_as_string_kebab_case")]
     pub value: ErrorOptionType,
 }
 
-#[derive(strum_macros::ToString, Debug, Serialize, PartialEq)]
+#[derive(Display, Debug, Serialize, PartialEq, Eq)]
 pub enum ErrorOptionType {
     StopOnError,
     ContinueOnError,
     RollbackOnError,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct Data {
     #[serde(rename = "xmlns:xc")]
     pub xmlns_xc: Option<String>,
@@ -137,7 +138,7 @@ pub struct Get {
     pub filter: Option<Filter>,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(rename = "rpc")]
 pub struct DiscardChangesReq {
     #[serde(rename = "message-id")]
@@ -147,10 +148,10 @@ pub struct DiscardChangesReq {
     pub discard_changes: DiscardChanges,
 }
 
-#[derive(Debug, Serialize, PartialEq, Default)]
+#[derive(Debug, Serialize, PartialEq, Eq, Default)]
 pub struct DiscardChanges {}
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(rename = "rpc")]
 pub struct CommitReq {
     #[serde(rename = "message-id")]
@@ -159,10 +160,10 @@ pub struct CommitReq {
     pub commit: Commit,
 }
 
-#[derive(Debug, Serialize, PartialEq, Default)]
+#[derive(Debug, Serialize, PartialEq, Eq, Default)]
 pub struct Commit {}
 
-#[derive(Debug, Serialize, PartialEq, Clone)]
+#[derive(Debug, Serialize, PartialEq, Eq, Clone)]
 pub struct Filter {
     #[serde(rename = "type", serialize_with = "serialize_as_string_kebab_case")]
     pub filter_type: FilterType,
@@ -198,7 +199,7 @@ pub struct Unlock {
     pub target: Target,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(rename = "rpc")]
 pub struct CloseSessionReq {
     #[serde(rename = "message-id")]
@@ -208,7 +209,7 @@ pub struct CloseSessionReq {
     pub close_session: CloseSession,
 }
 
-#[derive(Debug, Serialize, PartialEq, Default)]
+#[derive(Debug, Serialize, PartialEq, Eq, Default)]
 pub struct CloseSession {}
 
 #[derive(Debug, Serialize, PartialEq)]
@@ -221,13 +222,13 @@ pub struct KillSessionReq {
     pub kill_session: KillSession,
 }
 
-#[derive(Debug, Serialize, PartialEq, Default)]
+#[derive(Debug, Serialize, PartialEq, Eq, Default)]
 pub struct KillSession {
     #[serde(rename = "session-id")]
     pub session_id: SessionId,
 }
 
-#[derive(Debug, Serialize, PartialEq, Default)]
+#[derive(Debug, Serialize, PartialEq, Eq, Default)]
 pub struct SessionId {
     #[serde(rename = "$value")]
     pub value: u32,
@@ -249,19 +250,19 @@ pub struct CopyConfig {
     pub source: CopyConfigSourceType,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(untagged)]
 pub enum CopyConfigSourceType {
     Datastore { source: DatastoreType },
     Config { config: Data },
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct Target {
     pub target: DatastoreType,
 }
 
-#[derive(Debug, Serialize, PartialEq)]
+#[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
 pub enum DatastoreType {
     Running,
@@ -269,7 +270,7 @@ pub enum DatastoreType {
     Startup,
 }
 
-#[derive(strum_macros::ToString, Debug, PartialEq, Clone)]
+#[derive(Display, Debug, PartialEq, Eq, Clone)]
 pub enum FilterType {
     Subtree,
 }

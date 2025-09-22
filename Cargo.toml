@@ -7,19 +7,19 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-ssh2 = "0.9.1"
-serde = { version = "1.0.126", features = ["derive"] }
-quick-xml = { version = "0.22.0", features = ["serialize"] }
-thiserror = "1.0.26"
+ssh2 = "0.9.5"
+serde = { version = "1.0.226", features = ["derive"] }
+quick-xml = { version = "0.38.3", features = ["serialize"] }
+thiserror = "2.0.16"
 regex = "1.5.4"
-strum = "0.21.0"
-strum_macros = "0.21"
-heck = "0.3.3"
+strum = "0.27.2"
+strum_macros = "0.27.2"
+heck = "0.5.0"
 
 [dev-dependencies]
-serial_test = "0.5.1"
-bollard = "0.11.0"
-tokio = { version = "1.8.1", features = ["rt", "macros"] }
-futures-util = "0.3.15"
+serial_test = "3.2.0"
+bollard = "0.11.1"
+tokio = { version = "1.47.1", features = ["rt", "macros"] }
+futures-util = "0.3.31"
 confy = "0.4.0"
-lazy_static = "1.4.0"
+lazy_static = "1.5.0"
