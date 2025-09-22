@@ -15,7 +15,7 @@ pub struct SSHClient {
 }
 
 impl SSHClient {
-    #[must_use] 
+    #[must_use]
     pub fn create(host: &str, port: u16, user: &str, password: &str) -> Self {
         Self {
             host: host.to_owned(),

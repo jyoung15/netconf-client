@@ -8,9 +8,9 @@ pub trait RpcRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct EditConfigRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -34,9 +34,9 @@ impl RpcRsp for EditConfigRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct CopyConfigRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -60,9 +60,9 @@ impl RpcRsp for CopyConfigRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct DeleteConfigRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -86,9 +86,9 @@ impl RpcRsp for DeleteConfigRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct LockRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -112,9 +112,9 @@ impl RpcRsp for LockRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct UnlockRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -138,9 +138,9 @@ impl RpcRsp for UnlockRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct CloseSessionRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -164,9 +164,9 @@ impl RpcRsp for CloseSessionRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct KillSessionRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -190,7 +190,7 @@ impl RpcRsp for KillSessionRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct HelloServer {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     pub capabilities: CapabilitiesServer,
     #[serde(rename = "session-id")]
@@ -215,9 +215,9 @@ impl RpcRsp for HelloServer {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct GetConfigRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "rpc-error")]
     pub rpc_error: Option<Vec<RpcError>>,
@@ -241,9 +241,9 @@ impl RpcRsp for GetConfigRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct GetRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "rpc-error")]
     pub rpc_error: Option<Vec<RpcError>>,
@@ -267,9 +267,9 @@ impl RpcRsp for GetRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct DiscardChangesRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -293,9 +293,9 @@ impl RpcRsp for DiscardChangesRsp {
 
 #[derive(Debug, Deserialize, PartialEq)]
 pub struct CommitRsp {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
     #[serde(rename = "ok")]
     pub ok: Option<()>,
@@ -353,7 +353,7 @@ pub struct CapabilitiesServer {
 
 #[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 pub struct ErrorType {
-    #[serde(rename = "$value")]
+    #[serde(rename = "$text")]
     pub value: ErrorTypeE,
 }
 
@@ -368,7 +368,7 @@ pub enum ErrorTypeE {
 
 #[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 pub struct ErrorTag {
-    #[serde(rename = "$value")]
+    #[serde(rename = "$text")]
     pub value: ErrorTagE,
 }
 
@@ -399,7 +399,7 @@ pub enum ErrorTagE {
 
 #[derive(Debug, Deserialize, PartialEq, Eq, Clone)]
 pub struct ErrorSeverity {
-    #[serde(rename = "$value")]
+    #[serde(rename = "$text")]
     pub value: ErrorSeverityE,
 }
 
@@ -434,7 +434,11 @@ mod tests {
     <session-id>4</session-id>
 </hello>
 "#;
-        let hello: HelloServer = from_str(xml).unwrap();
+        let mut r = quick_xml::NsReader::from_str(xml);
+        r.config_mut().trim_text(true);
+        let mut de = quick_xml::de::Deserializer::buffering(r);
+        let hello: HelloServer = serde::Deserialize::deserialize(&mut de).unwrap();
+
         let expected_hello = HelloServer {
             xmlns: "urn:ietf:params:xml:ns:netconf:base:1.0".to_string(),
             capabilities: CapabilitiesServer {

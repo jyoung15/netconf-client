@@ -1,7 +1,21 @@
 use crate::consts;
 use crate::errors::NetconfClientError;
 use crate::errors::NetconfClientError::{NetconfError, NetconfResponseIdError, SSHClientError};
-use crate::models::{replies::{HelloServer, RpcRsp, KillSessionRsp, CloseSessionRsp, GetConfigRsp, GetRsp, EditConfigRsp, LockRsp, UnlockRsp, DeleteConfigRsp, DiscardChangesRsp, CommitRsp, CopyConfigRsp}, requests::{HelloClient, CapabilitiesClient, Capability, KillSessionReq, KillSession, SessionId, CloseSessionReq, DatastoreType, Filter, GetConfigReq, GetConfig, Target, GetReq, Get, DefaultOperationType, TestOptionType, ErrorOptionType, EditConfigReq, EditConfig, Data, DefaultOperation, TestOption, ErrorOption, LockReq, Lock, UnlockReq, Unlock, DeleteConfigReq, DeleteConfig, DiscardChangesReq, CommitReq, CopyConfigSourceType, CopyConfigReq, CopyConfig}};
+use crate::models::{
+    replies::{
+        CloseSessionRsp, CommitRsp, CopyConfigRsp, DeleteConfigRsp, DiscardChangesRsp,
+        EditConfigRsp, GetConfigRsp, GetRsp, HelloServer, KillSessionRsp, LockRsp, RpcRsp,
+        UnlockRsp,
+    },
+    requests::{
+        CapabilitiesClient, Capability, CloseSessionReq, CommitReq, CopyConfig, CopyConfigReq,
+        CopyConfigSourceType, Data, DatastoreType, DefaultOperation, DefaultOperationType,
+        DeleteConfig, DeleteConfigReq, DiscardChangesReq, EditConfig, EditConfigReq, ErrorOption,
+        ErrorOptionType, Filter, Get, GetConfig, GetConfigReq, GetReq, HelloClient, KillSession,
+        KillSessionReq, Lock, LockReq, SessionId, Target, TestOption, TestOptionType, Unlock,
+        UnlockReq,
+    },
+};
 use crate::ssh_client::SSHClient;
 use quick_xml::se::to_string;
 use std::io::{Read, Write};
@@ -13,7 +27,7 @@ pub struct NetconfClient {
 }
 
 impl NetconfClient {
-    #[must_use] 
+    #[must_use]
     pub fn new(host: &str, port: u16, user: &str, password: &str) -> Self {
         Self {
             ssh_client: SSHClient::create(host, port, user, password),
@@ -22,14 +36,14 @@ impl NetconfClient {
         }
     }
 
-    #[must_use] 
+    #[must_use]
     pub const fn get_session_id(&self) -> Option<u32> {
         self.session_id
     }
 
     pub fn connect(&mut self) -> Result<HelloServer, NetconfClientError> {
         self.ssh_client.connect()?;
-        let reply: HelloServer = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: HelloServer = quick_xml::de::from_str(&self.get_reply()?)?;
         if reply.is_ok() {
             self.session_id = Some(reply.session_id);
         }
@@ -72,7 +86,7 @@ impl NetconfClient {
                 }],
             },
         };
-        let cmd = to_string(&req).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&req)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)
     }
 
@@ -85,9 +99,9 @@ impl NetconfClient {
                 session_id: SessionId { value: session_id },
             },
         };
-        let cmd = to_string(&req).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&req)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)?;
-        let reply: KillSessionRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: KillSessionRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
@@ -99,9 +113,9 @@ impl NetconfClient {
             xmlns: consts::XMLNS.to_string(),
             close_session: Default::default(),
         };
-        let cmd = to_string(&req).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&req)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)?;
-        let reply: CloseSessionRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: CloseSessionRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         if reply.is_ok() {
             self.session_id = None;
@@ -129,13 +143,13 @@ impl NetconfClient {
                 filter: filter_copy,
             },
         };
-        let mut cmd = to_string(&req).unwrap() + consts::MESSAGE_SEPARATOR;
+        let mut cmd = to_string(&req)? + consts::MESSAGE_SEPARATOR;
         if filter_exists {
             cmd.insert_str(cmd.rfind(" </filter>").unwrap(), &filter.unwrap().data);
         }
         self.send(&cmd)?;
         let raw_rsp = self.get_reply()?;
-        let mut deserialized_rsp = quick_xml::de::from_str::<GetConfigRsp>(&raw_rsp).unwrap();
+        let mut deserialized_rsp = quick_xml::de::from_str::<GetConfigRsp>(&raw_rsp)?;
         deserialized_rsp.data = Some(Self::get_data(&raw_rsp).unwrap_or("").to_string());
         self.check_response_message_id(&deserialized_rsp)?;
         Self::make_return(deserialized_rsp)
@@ -157,13 +171,13 @@ impl NetconfClient {
         };
 
         // hack
-        let mut cmd = to_string(&req).unwrap() + consts::MESSAGE_SEPARATOR;
+        let mut cmd = to_string(&req)? + consts::MESSAGE_SEPARATOR;
         if filter_exists {
             cmd.insert_str(cmd.rfind(" </filter>").unwrap(), &filter.unwrap().data);
         }
         self.send(&cmd)?;
         let raw_rsp = self.get_reply()?;
-        let mut deserialized_rsp = quick_xml::de::from_str::<GetRsp>(&raw_rsp).unwrap();
+        let mut deserialized_rsp = quick_xml::de::from_str::<GetRsp>(&raw_rsp)?;
         deserialized_rsp.data = Some(Self::get_data(&raw_rsp).unwrap().to_string());
         self.check_response_message_id(&deserialized_rsp)?;
         Self::make_return(deserialized_rsp)
@@ -205,11 +219,11 @@ impl NetconfClient {
                 value: error_option,
             });
         }
-        let mut cmd = to_string(&req).unwrap() + consts::MESSAGE_SEPARATOR;
+        let mut cmd = to_string(&req)? + consts::MESSAGE_SEPARATOR;
         // hack
         cmd.insert_str(cmd.rfind(" </config>").unwrap(), &data);
         self.send(&cmd)?;
-        let reply: EditConfigRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: EditConfigRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
@@ -223,9 +237,9 @@ impl NetconfClient {
                 target: Target { target },
             },
         };
-        let lock_cmd = to_string(&model).unwrap() + consts::MESSAGE_SEPARATOR;
+        let lock_cmd = to_string(&model)? + consts::MESSAGE_SEPARATOR;
         self.send(&lock_cmd)?;
-        let reply: LockRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: LockRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
@@ -239,9 +253,9 @@ impl NetconfClient {
                 target: Target { target },
             },
         };
-        let cmd = to_string(&model).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&model)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)?;
-        let reply: UnlockRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: UnlockRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
@@ -258,9 +272,9 @@ impl NetconfClient {
                 target: Target { target },
             },
         };
-        let cmd = to_string(&model).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&model)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)?;
-        let reply: DeleteConfigRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: DeleteConfigRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
@@ -272,9 +286,9 @@ impl NetconfClient {
             message_id: self.id,
             discard_changes: Default::default(),
         };
-        let cmd = to_string(&model).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&model)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)?;
-        let reply: DiscardChangesRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: DiscardChangesRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
@@ -286,9 +300,9 @@ impl NetconfClient {
             message_id: self.id,
             commit: Default::default(),
         };
-        let cmd = to_string(&model).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&model)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)?;
-        let reply: CommitRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: CommitRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
@@ -308,14 +322,14 @@ impl NetconfClient {
                 source,
             },
         };
-        let cmd = to_string(&model).unwrap() + consts::MESSAGE_SEPARATOR;
+        let cmd = to_string(&model)? + consts::MESSAGE_SEPARATOR;
         self.send(&cmd)?;
-        let reply: CopyConfigRsp = quick_xml::de::from_str(&self.get_reply()?).unwrap();
+        let reply: CopyConfigRsp = quick_xml::de::from_str(&self.get_reply()?)?;
         self.check_response_message_id(&reply)?;
         Self::make_return(reply)
     }
 
-    #[must_use] 
+    #[must_use]
     pub fn get_data(text: &str) -> Option<&str> {
         let begin_begin_tag = "<data";
         let end_begin_tag = ">";

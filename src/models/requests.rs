@@ -6,7 +6,7 @@ use strum_macros::Display;
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "hello")]
 pub struct HelloClient {
-    #[serde(rename = "xmlns")]
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     pub capabilities: CapabilitiesClient,
 }
@@ -26,8 +26,9 @@ pub struct Capability {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct GetConfigReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     #[serde(rename = "get-config")]
     pub get_config: GetConfig,
@@ -43,8 +44,9 @@ pub struct GetConfig {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct EditConfigReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     #[serde(rename = "edit-config")]
     pub edit_config: EditConfig,
@@ -64,11 +66,12 @@ pub struct EditConfig {
 
 #[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct DefaultOperation {
-    #[serde(rename = "$value", serialize_with = "serialize_as_string_kebab_case")]
+    #[serde(rename = "$text")]
     pub value: DefaultOperationType,
 }
 
 #[derive(Display, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
 pub enum DefaultOperationType {
     Merge,
     Replace,
@@ -77,11 +80,12 @@ pub enum DefaultOperationType {
 
 #[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct TestOption {
-    #[serde(rename = "$value", serialize_with = "serialize_as_string_kebab_case")]
+    #[serde(rename = "$text")]
     pub value: TestOptionType,
 }
 
 #[derive(Display, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
 pub enum TestOptionType {
     TestThenSet,
     Set,
@@ -90,11 +94,12 @@ pub enum TestOptionType {
 
 #[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct ErrorOption {
-    #[serde(rename = "$value", serialize_with = "serialize_as_string_kebab_case")]
+    #[serde(rename = "$text")]
     pub value: ErrorOptionType,
 }
 
 #[derive(Display, Debug, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "kebab-case")]
 pub enum ErrorOptionType {
     StopOnError,
     ContinueOnError,
@@ -103,7 +108,7 @@ pub enum ErrorOptionType {
 
 #[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct Data {
-    #[serde(rename = "xmlns:xc")]
+    #[serde(rename = "@xmlns:xc")]
     pub xmlns_xc: Option<String>,
     #[serde(rename = "$value")]
     pub data: String,
@@ -112,8 +117,9 @@ pub struct Data {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct DeleteConfigReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     #[serde(rename = "delete-config")]
     pub delete_config: DeleteConfig,
@@ -127,8 +133,9 @@ pub struct DeleteConfig {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct GetReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     pub get: Get,
 }
@@ -141,8 +148,9 @@ pub struct Get {
 #[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(rename = "rpc")]
 pub struct DiscardChangesReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     #[serde(rename = "discard-changes")]
     pub discard_changes: DiscardChanges,
@@ -154,8 +162,9 @@ pub struct DiscardChanges {}
 #[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(rename = "rpc")]
 pub struct CommitReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     pub commit: Commit,
 }
@@ -165,7 +174,7 @@ pub struct Commit {}
 
 #[derive(Debug, Serialize, PartialEq, Eq, Clone)]
 pub struct Filter {
-    #[serde(rename = "type", serialize_with = "serialize_as_string_kebab_case")]
+    #[serde(rename = "@type", serialize_with = "serialize_as_string_kebab_case")]
     pub filter_type: FilterType,
     #[serde(rename = "$value")]
     pub data: String,
@@ -174,8 +183,9 @@ pub struct Filter {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct LockReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     pub lock: Lock,
 }
@@ -188,8 +198,9 @@ pub struct Lock {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct UnlockReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     pub unlock: Unlock,
 }
@@ -202,8 +213,9 @@ pub struct Unlock {
 #[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(rename = "rpc")]
 pub struct CloseSessionReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     #[serde(rename = "close-session")]
     pub close_session: CloseSession,
@@ -215,8 +227,9 @@ pub struct CloseSession {}
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct KillSessionReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     #[serde(rename = "kill-session")]
     pub kill_session: KillSession,
@@ -237,8 +250,9 @@ pub struct SessionId {
 #[derive(Debug, Serialize, PartialEq)]
 #[serde(rename = "rpc")]
 pub struct CopyConfigReq {
-    #[serde(rename = "message-id")]
+    #[serde(rename = "@message-id")]
     pub message_id: u32,
+    #[serde(rename = "@xmlns")]
     pub xmlns: String,
     #[serde(rename = "copy-config")]
     pub copy_config: CopyConfig,
@@ -253,12 +267,18 @@ pub struct CopyConfig {
 #[derive(Debug, Serialize, PartialEq, Eq)]
 #[serde(untagged)]
 pub enum CopyConfigSourceType {
-    Datastore { source: DatastoreType },
-    Config { config: Data },
+    Datastore {
+        #[serde(rename = "$value")]
+        source: DatastoreType,
+    },
+    Config {
+        config: Data,
+    },
 }
 
 #[derive(Debug, Serialize, PartialEq, Eq)]
 pub struct Target {
+    #[serde(rename = "$value")]
     pub target: DatastoreType,
 }
 
